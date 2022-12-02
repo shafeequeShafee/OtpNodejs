@@ -6,16 +6,16 @@
 const { sendMail } = require('../service/mail');
 const User = require('../model/User');
 const { generateOTP } = require('../service/otp');
-const {encrypt,compare} =require("../service/crypto")
+const { encrypt, compare } = require("../service/crypto")
 
 module.exports.signUpUser = async (req, res) => {
-  const { name,email, password } = req.body;
+  const { name, email, password } = req.body;
   const isExisting = await findUserByEmail(email);
   if (isExisting) {
     return res.send('Already existing');
   }
   // create new user
-  const newUser = await createUser(name,email, password);
+  const newUser = await createUser(name, email, password);
   if (!newUser[0]) {
     return res.status(400).send({
       message: 'Unable to create new user',
@@ -36,7 +36,7 @@ const findUserByEmail = async (email) => {
 };
 
 
-const createUser = async (name,email, password) => {
+const createUser = async (name, email, password) => {
   const hashedPassword = await encrypt(password);
   const otpGenerated = generateOTP();
   const newUser = await User.create({
@@ -100,4 +100,15 @@ const validateUserSignUp = async (email, otp) => {
     $set: { active: true },
   });
   return [true, updatedUser];
+};
+
+
+
+module.exports.cosmoDBStorage = async (req, res) => {
+  console.log('cosmoDB')
+};
+
+
+module.exports.blobStorage = async (req, res) => {
+  console.log('blobStorage')
 };
